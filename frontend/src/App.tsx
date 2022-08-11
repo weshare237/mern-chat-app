@@ -3,15 +3,17 @@ import React from 'react'
 import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
-import Chats from './pages/Chats'
+import Chat from './pages/Chat'
 
 const App: React.FC = () => {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='chats' element={<Chats />} />
-      </Routes>
+      <div className='App'>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='chats' element={<Chat />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   )
 }

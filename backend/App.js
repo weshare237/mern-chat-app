@@ -8,6 +8,8 @@ const connectDB = require('./db/connect')
 
 // routes
 const chatsRouter = require('./routes/chats')
+const authRouter = require('./routes/auth')
+const messagesRouter = require('./routes/messages')
 
 // middlewares
 const notFoundMiddleware = require('./middleware/not-found')
@@ -33,6 +35,8 @@ app.use(xss())
 
 // routes
 app.use('/api/v1/chats', chatsRouter)
+app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/messages', messagesRouter)
 
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)

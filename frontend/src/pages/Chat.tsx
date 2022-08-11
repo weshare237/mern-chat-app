@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const Chats: React.FC = () => {
+const Chat: React.FC = () => {
   const [chats, setChats] = useState<Chat[]>([])
 
   const getAllChats = async () => {
@@ -26,4 +26,4 @@ const Chats: React.FC = () => {
   )
 }
 
-export default Chats
+export default Chat
