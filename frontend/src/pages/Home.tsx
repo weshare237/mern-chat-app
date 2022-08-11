@@ -26,7 +26,7 @@ const Home: React.FC = () => {
         borderWidth='1px'
       >
         <Text fontSize='4xl' fontFamily='work sans' color='black'>
-          Talk-A-Tive
+          Every-Day-Intelligent
         </Text>
       </Box>
       <Box
