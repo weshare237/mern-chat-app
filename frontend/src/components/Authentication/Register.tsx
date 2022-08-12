@@ -10,6 +10,9 @@ import {
 } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
+import { useToast } from '@chakra-ui/react'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 const Register: React.FC = () => {
   const [name, setName] = useState<string>('')
@@ -18,10 +21,106 @@ const Register: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>('')
   const [picture, setPicture] = useState<string>('')
   const [isHidden, setIsHidden] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const toast = useToast()
+  const navigate = useNavigate()
 
-  const postDetails = (pic: File): void => {}
+  const postDetails = async (pic: File) => {
+    setIsLoading(true)
 
-  const handleSubmit = () => {}
+    if (pic.type === 'image/png' || pic.type === 'image/jpeg') {
+      const formData = new FormData()
+      formData.append('file', pic)
+      formData.append('upload_preset', 'chat-app')
+      formData.append('cloud_name', 'demofkd')
+
+      try {
+        const { data } = await axios.post(
+          'https://api.cloudinary.com/v1_1/demofkd/image/upload',
+          formData
+        )
+        setPicture(data.url.toString())
+        setIsLoading(false)
+      } catch (error: any) {
+        console.log(error.response)
+        setIsLoading(false)
+      }
+    } else {
+      toast({
+        title: 'Please select an image!',
+        description: 'Supported formats are png and jpg',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      })
+      setIsLoading(false)
+      return
+    }
+  }
+
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    setIsLoading(true)
+
+    if (!name || !email || !password || !confirmPassword) {
+      toast({
+        title: 'Please provide all informations!',
+        description: 'All fields are required',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      })
+      setIsLoading(false)
+      return
+    }
+
+    if (password !== confirmPassword) {
+      toast({
+        title: 'Passwords do not match!',
+        description: 'Password and confirm password must be same',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      })
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      const { data } = await axios.post('/api/v1/auth/register', {
+        name,
+        email,
+        password,
+        picture,
+      })
+
+      toast({
+        title: 'Registration successfull!',
+        description: 'You are good to go',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      })
+
+      localStorage.setItem('userInfo', JSON.stringify(data))
+      setIsLoading(false)
+
+      navigate('/chats')
+    } catch (error: any) {
+      toast({
+        title: 'Error occured!',
+        description: error.response.data,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      })
+      setIsLoading(false)
+    }
+  }
 
   return (
     <VStack spacing='5px'>
@@ -88,7 +187,14 @@ const Register: React.FC = () => {
           }}
         />
       </FormControl>
-      <Button colorScheme='whatsapp' w='100%' mt={15} onClick={handleSubmit}>
+      <Button
+        colorScheme='whatsapp'
+        w='100%'
+        mt={15}
+        onClick={handleSubmit}
+        isLoading={isLoading}
+        loadingText='Please wait for a moment...'
+      >
         Register
       </Button>
     </VStack>
