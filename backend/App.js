@@ -10,10 +10,12 @@ const connectDB = require('./db/connect')
 const chatsRouter = require('./routes/chats')
 const authRouter = require('./routes/auth')
 const messagesRouter = require('./routes/messages')
+const usersRouter = require('./routes/users')
 
 // middlewares
 const notFoundMiddleware = require('./middleware/not-found')
 const errorHandlerMiddleware = require('./middleware/error-handler')
+const authMiddleware = require('./middleware/authentication')
 
 // extra security
 const helmet = require('helmet')
@@ -34,9 +36,10 @@ app.use(cors())
 app.use(xss())
 
 // routes
-app.use('/api/v1/chats', chatsRouter)
+app.use('/api/v1/chats', authMiddleware, chatsRouter)
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/messages', messagesRouter)
+app.use('/api/v1/users', authMiddleware, usersRouter)
 
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)
