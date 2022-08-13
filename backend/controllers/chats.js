@@ -45,10 +45,55 @@ const createChat = async (req, res) => {
   }
 }
 
-const createGroup = async (req, res) => {}
+const createGroup = async (req, res) => {
+  let { users, name } = req.body
+
+  if (!users || !name) {
+    throw new BadRequestError('Please provide users and group name')
+  }
+
+  users = JSON.parse(users)
+  if (users.length < 2) {
+    throw new BadRequestError(
+      'More than two users are required to form a group chat'
+    )
+  }
+
+  // const idsArray = users.map((user) => user.userId)
+
+  users.push(req.user.userId)
+
+  const chatGroupData = {
+    chatName: name,
+    isGroupChat: true,
+    users,
+    groupAdmin: req.user.userId,
+  }
+
+  const chatGroup = await Chat.create(chatGroupData)
+
+  const fullChatGroup = await Chat.findById(chatGroup._id)
+    .populate('users', '-password')
+    .populate('groupAdmin', '-password')
+
+  res.status(StatusCodes.CREATED).json(fullChatGroup)
+}
 
 const getAllChats = async (req, res) => {
-  res.status(StatusCodes.OK).send()
+  let chats = await Chat.find({
+    users: { $elemMatch: { $eq: req.user.userId } },
+  })
+    .populate('users', '-password')
+    .populate('latestMessage')
+    .populate('groupAdmin', '-password')
+    .sort('-updatedAt')
+
+  chats = await User.populate(chats, {
+    path: 'latestMessage.sender',
+    select: 'name email picture',
+  })
+
+  res.status(StatusCodes.OK).json(chats)
 }
 
 const renameGroup = async (req, res) => {}
