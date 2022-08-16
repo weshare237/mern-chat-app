@@ -14,10 +14,10 @@ const authenticationMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const { userId, name } = decoded
+    const { userId, name, picture, email } = decoded
     // an alternative
     // req.user = await User.findById(userId).select('-password')
-    req.user = req.user = { userId, name }
+    req.user = { userId, name, picture, email }
     next()
   } catch (error) {
     throw new UnauthenticatedError('Authentication invalid')

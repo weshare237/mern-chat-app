@@ -7,12 +7,13 @@ interface Props {
 
 const ChatContext = createContext<ChatContextType | null>(null)
 
-const ChatState = () => {
+export const ChatState = () => {
   return useContext(ChatContext)
 }
 
 const ChatProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User | null>(null)
+  const [selectedChat, setSelectedChat] = useState<any>()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -28,7 +29,9 @@ const ChatProvider = ({ children }: Props) => {
   }, [navigate])
 
   return (
-    <ChatContext.Provider value={{ user, setUser }}>
+    <ChatContext.Provider
+      value={{ user, setUser, selectedChat, setSelectedChat }}
+    >
       {children}
     </ChatContext.Provider>
   )
