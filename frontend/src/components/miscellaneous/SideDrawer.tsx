@@ -32,8 +32,9 @@ import {
   Input,
   IconButton,
   useToast,
+  Spinner,
 } from '@chakra-ui/react'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { ChatState } from '../../context/ChatProvider'
 import ProfileModal from './ProfileModal'
 import { useNavigate } from 'react-router-dom'
@@ -46,8 +47,7 @@ const SideDrawer: React.FC = () => {
   const [searchResult, setSearchResult] = useState([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isLoadingChat, setIsLoadingChat] = useState<boolean>(false)
-  const user: User | null = ChatState()?.user || null
-  const setSelectedChat = ChatState()?.selectedChat
+  const { user, setSelectedChat, chats, setChats } = ChatState()
   const navigate = useNavigate()
   const toast = useToast()
 
@@ -79,8 +79,6 @@ const SideDrawer: React.FC = () => {
 
       setIsLoading(false)
       setSearchResult(data)
-
-      console.log(data)
     } catch (error: any) {
       toast({
         title: 'Error occured!',
@@ -110,10 +108,23 @@ const SideDrawer: React.FC = () => {
         }
       )
 
+      if (chats) {
+        if (!chats.find((c) => c._id === data._id)) setChats([...chats, data])
+      }
       setSelectedChat(data)
       setIsLoadingChat(false)
       onClose()
-    } catch (error) {}
+    } catch (error: any) {
+      toast({
+        title: 'Error fetching the chat',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom-left',
+      })
+      return
+    }
   }
 
   const logoutHandler = (): void => {
@@ -225,6 +236,7 @@ const SideDrawer: React.FC = () => {
                 />
               ))
             )}
+            {isLoadingChat && <Spinner ml='auto' display='flex' />}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

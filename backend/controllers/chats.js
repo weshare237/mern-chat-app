@@ -93,6 +93,7 @@ const getAllChats = async (req, res) => {
     select: 'name email picture',
   })
 
+  console.log(chats)
   res.status(StatusCodes.OK).json(chats)
 }
 

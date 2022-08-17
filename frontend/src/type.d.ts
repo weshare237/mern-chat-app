@@ -1,11 +1,3 @@
-interface Chat {
-  isGroupChat: boolean
-  users: User[]
-  _id: string
-  chatName: string
-  groupAdmin?: User
-}
-
 interface User {
   user: {
     name: string
@@ -22,14 +14,21 @@ interface IUser {
   password: string
   picture?: string
   isAdmin?: string
-  createdAt: Date
-  updatedAt: Date
-  _v: number
 }
 
 interface ChatContextType {
   user: User | null
-  setUser: (user: User) => void
-  selectedChat: any
-  setSelectedChat: (chat: any) => void
+  setUser: React.Dispatch<React.SetStateAction<User | null>>
+  selectedChat: Chat | null
+  setSelectedChat: React.Dispatch<React.SetStateAction<Chat | null>>
+  chats: Chat[]
+  setChats: React.Dispatch<React.SetStateAction<Chat[]>>
+}
+
+interface Chat {
+  _id: string
+  chatName: string
+  isChatGroup: boolean
+  users: string[] | IUser[]
+  groupAdmin?: string | IUser
 }

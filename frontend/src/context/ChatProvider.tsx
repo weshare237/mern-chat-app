@@ -5,7 +5,7 @@ interface Props {
   children: React.ReactNode
 }
 
-const ChatContext = createContext<ChatContextType | null>(null)
+const ChatContext = createContext({} as ChatContextType)
 
 export const ChatState = () => {
   return useContext(ChatContext)
@@ -13,7 +13,8 @@ export const ChatState = () => {
 
 const ChatProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User | null>(null)
-  const [selectedChat, setSelectedChat] = useState<any>()
+  const [selectedChat, setSelectedChat] = useState<Chat | null>(null)
+  const [chats, setChats] = useState<Chat[]>([])
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -22,7 +23,6 @@ const ChatProvider = ({ children }: Props) => {
     if (typeof storage === 'string') {
       const userInfo: User = JSON.parse(storage)
       setUser(userInfo)
-      console.log(userInfo)
     } else {
       navigate('/')
     }
@@ -30,7 +30,7 @@ const ChatProvider = ({ children }: Props) => {
 
   return (
     <ChatContext.Provider
-      value={{ user, setUser, selectedChat, setSelectedChat }}
+      value={{ user, setUser, selectedChat, setSelectedChat, chats, setChats }}
     >
       {children}
     </ChatContext.Provider>

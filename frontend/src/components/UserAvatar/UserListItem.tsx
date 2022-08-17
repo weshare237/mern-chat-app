@@ -4,7 +4,7 @@ import { Avatar, Box, Text } from '@chakra-ui/react'
 
 interface Props {
   user: IUser
-  handleFunction: any
+  handleFunction: () => void
 }
 
 const UserListItem: React.FC<Props> = ({ user, handleFunction }) => {
